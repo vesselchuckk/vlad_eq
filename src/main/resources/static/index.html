@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оптимизация ТО оборудования</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Экран авторизации -->
+    <div id="auth-container" class="container">
+        <h2 id="auth-title">Вход в систему</h2>
+        <div id="auth-form">
+            <input type="text" id="username" placeholder="Логин">
+            <input type="password" id="password" placeholder="Пароль">
+            <select id="role-select">
+                <option value="USER">Пользователь</option>
+                <option value="ADMIN">Администратор</option>
+            </select>
+            <div class="btn-group">
+                <button onclick="authAction('login')">Войти</button>
+                <button class="secondary" onclick="authAction('register')">Регистрация</button>
+            </div>
+        </div>
+        <p id="auth-message"></p>
+    </div>
+
+    <!-- Основной интерфейс приложения (скрыт по умолчанию) -->
+    <div id="app-container" class="container" style="display:none;">
+        <header>
+            <h2>Дашборд обслуживания</h2>
+            <button class="danger" onclick="logout()">Выйти</button>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>Показатель OEE</h3>
+                <div id="oee-value" class="stat">0%</div>
+            </div>
+            <div class="card">
+                <h3>Критический риск</h3>
+                <div id="risk-count" class="stat">0</div>
+            </div>
+        </div>
+
+        <h3>Календарный график обслуживания</h3>
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th>Оборудование</th>
+                    <th>Дата ТО</th>
+                    <th>Риск отказа</th>
+                    <th>Статус / Бригада</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-body"></tbody>
+        </table>
+
+        <div id="admin-panel" style="display:none;">
+            <h3>Создание рабочего ордера</h3>
+            <div class="form-row">
+                <input type="number" id="order-eq-id" placeholder="ID оборудования">
+                <input type="text" id="order-type" placeholder="Тип (ремонт/профилактика)">
+                <button onclick="createOrder()">Создать ордер</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
