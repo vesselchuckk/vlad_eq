@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/equipment/high-risk").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/equipment/stats").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/equipment/schedule").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
                 
                 // Все остальные запросы требуют авторизации
                 .anyRequest().authenticated()
