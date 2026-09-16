@@ -1,12 +1,16 @@
 # .gitlab-ci.yml
+# ВАЖНО: раннер использует executor = "shell", поэтому все шаги выполняются
+# напрямую на хосте (WSL2) под пользователем gitlab-runner.
+# Java 17+, Maven, Docker и kubectl должны быть установлены и доступны
+# именно в PATH этого пользователя — проверяется через:
+#   sudo -u gitlab-runner bash -c 'java -version && mvn -version && docker -v && kubectl version --client'
+
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "-B"
   DOCKER_IMAGE: "localhost:4000/${CI_PROJECT_NAME}"
   DOCKER_TAG: "${CI_COMMIT_SHORT_SHA}"
   KUBE_NAMESPACE: "default"
-  DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: "tcp://docker:2375"
 
 stages:
   - build
@@ -14,20 +18,17 @@ stages:
   - package
   - docker
   - deploy
- 
-.maven_template:
-  image: maven:3.9-eclipse-temurin-21
-  cache:
-    key:
-      files:
-        - pom.xml
-    paths:
-      - .m2/repository
-    policy: pull-push
 
-# BUILD 
+cache:
+  key:
+    files:
+      - pom.xml
+  paths:
+    - .m2/repository
+  policy: pull-push
+
+# BUILD
 build:
-  extends: .maven_template
   stage: build
   script:
     - mvn $MAVEN_CLI_OPTS compile
@@ -41,9 +42,8 @@ build:
     - if: $CI_COMMIT_BRANCH == "develop"
     - if: $CI_COMMIT_TAG
 
-# TEST 
+# TEST
 test:
-  extends: .maven_template
   stage: test
   needs: ["build"]
   script:
@@ -64,7 +64,6 @@ test:
 
 # PACKAGE (jar)
 package:
-  extends: .maven_template
   stage: package
   needs: ["test"]
   script:
@@ -81,15 +80,9 @@ package:
 # DOCKER BUILD & PUSH
 docker-build:
   stage: docker
-  image: docker:24
-  services:
-    - docker:24-dind
   needs: ["package"]
-  before_script:
-    - |
-      mkdir -p /etc/docker
-      echo '{"insecure-registries":["localhost:4000"]}' > /etc/docker/daemon.json
-    - docker info
+  tags:
+    - shell
   script:
     - docker build -t $DOCKER_IMAGE:$DOCKER_TAG -t $DOCKER_IMAGE:latest .
     - docker push $DOCKER_IMAGE:$DOCKER_TAG
@@ -99,10 +92,9 @@ docker-build:
     - if: $CI_COMMIT_BRANCH == "develop"
     - if: $CI_COMMIT_TAG
 
-# DEPLOY
+# DEPLOY to k3s
 deploy:
   stage: deploy
-  image: bitnami/kubectl:latest
   needs: ["docker-build"]
   script:
     - kubectl config use-context $KUBE_CONTEXT
