@@ -46,6 +46,15 @@ test:
   extends: .maven_template
   stage: test
   needs: ["build"]
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+  variables:
+    POSTGRES_DB: equipment_maintenance
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test_password
+    POSTGRES_HOST: postgres        # имя сервиса = хост
+    POSTGRES_PORT: "5432"
   script:
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
