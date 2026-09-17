@@ -115,8 +115,10 @@ deploy:
     name: bitnami/kubectl:latest
     entrypoint: [""]
   needs: ["push"]
+  variables:
+    KUBECONFIG: $KUBECONFIG_CI
   script:
-    - kubectl config use-context $KUBE_CONTEXT
+    - kubectl config get-contexts
     - kubectl set image deployment/backend backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
     - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE
   environment:
