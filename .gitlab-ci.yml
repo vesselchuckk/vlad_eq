@@ -5,6 +5,7 @@ variables:
   DOCKER_IMAGE: "${HOST_IP}:4000/${CI_PROJECT_NAME}"
   DOCKER_TAG: "${CI_COMMIT_SHORT_SHA}"
   KUBE_NAMESPACE: "default"
+  PULL_IMAGE: "localhost:4000/vlad_eq"
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: "tcp://docker:2375"
 
@@ -120,7 +121,7 @@ deploy:
   script:
     - sed -i "s#host.docker.internal:6443#${HOST_IP}:6443#" $KUBECONFIG
     - kubectl config get-contexts
-    - kubectl set image deployment/vlad-eq-backend vlad-eq=host.docker.internal:$DOCKER_TAG -n $KUBE_NAMESPACE
+    - kubectl set image deployment/vlad-eq-backend vlad-eq=${PULL_IMAGE}:$DOCKER_TAG -n $KUBE_NAMESPACE
     - kubectl rollout status deployment/vlad-eq-backend -n $KUBE_NAMESPACE
   environment:
     name: production
