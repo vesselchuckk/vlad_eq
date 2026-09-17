@@ -2,7 +2,7 @@
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "-B"
-  DOCKER_IMAGE: "host.docker.internal:4000/${CI_PROJECT_NAME}"
+  DOCKER_IMAGE: "${HOST_IP}:4000/${CI_PROJECT_NAME}"
   DOCKER_TAG: "${CI_COMMIT_SHORT_SHA}"
   KUBE_NAMESPACE: "default"
   DOCKER_TLS_CERTDIR: ""
@@ -118,6 +118,7 @@ deploy:
   variables:
     KUBECONFIG: $KUBECONFIG_CI
   script:
+    - sed -i "s#host.docker.internal:6443#${HOST_IP}:6443#" $KUBECONFIG
     - kubectl config get-contexts
     - kubectl set image deployment/backend backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
     - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE
