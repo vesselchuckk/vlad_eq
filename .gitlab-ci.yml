@@ -93,7 +93,7 @@ push:
   image: docker:24
   services:
     - name: docker:24-dind
-      command: ["--insecure-registry=localhost:4000"]
+      command: ["--insecure-registry=localhost:4000", "--storage-driver=vfs"]
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
