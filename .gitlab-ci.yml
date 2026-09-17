@@ -2,7 +2,7 @@
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "-B"
-  DOCKER_IMAGE: "localhost:4000/${CI_PROJECT_NAME}"
+  DOCKER_IMAGE: "host.docker.internal:4000/${CI_PROJECT_NAME}"
   DOCKER_TAG: "${CI_COMMIT_SHORT_SHA}"
   KUBE_NAMESPACE: "default"
   DOCKER_TLS_CERTDIR: ""
