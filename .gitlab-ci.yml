@@ -98,7 +98,7 @@ push:
     - >-
       /kaniko/executor
       --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --dockerfile "${CI_PROJECT_DIR}/docker/Dockerfile"
       --destination "${DOCKER_IMAGE}:${DOCKER_TAG}"
       --destination "${DOCKER_IMAGE}:latest"
       --insecure
