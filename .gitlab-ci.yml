@@ -120,8 +120,8 @@ deploy:
   script:
     - sed -i "s#host.docker.internal:6443#${HOST_IP}:6443#" $KUBECONFIG
     - kubectl config get-contexts
-    - kubectl set image deployment/vlad-eq vlad-eq=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
-    - kubectl rollout status deployment/vlad-eq -n $KUBE_NAMESPACE
+    - kubectl set image deployment/vlad-eq-backend vlad-eq=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
+    - kubectl rollout status deployment/vlad-eq-backend -n $KUBE_NAMESPACE
   environment:
     name: production
   rules:
