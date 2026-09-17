@@ -111,7 +111,9 @@ push:
 # DEPLOY
 deploy:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
   needs: ["push"]
   script:
     - kubectl config use-context $KUBE_CONTEXT
